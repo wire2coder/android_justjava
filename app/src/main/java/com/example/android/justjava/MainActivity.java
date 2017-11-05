@@ -22,20 +22,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
+    * Calculate the price of the order
+    * @param quantity is the number of coffee ordered
+    * */
+    private int calculatePrice(int quantity, int pricePerCup) {
+         return quantity * pricePerCup;
+
+    }
+
+    /*
     * This method is called when the 'order button' is clicked
     * why do you need to pass in 'View'????
     * */
     public void submitOrder(View view) {
 
-        int price = (quantity * 5);
+        int price = calculatePrice(quantity, 5);
+        String priceMessage = "Total: $" + price;
+        priceMessage = priceMessage + "\nThank you!";
 
-        String priceMessage = "Amount due $ " + price;
-        String priceM2 = "That would be $" + price + " please. \n Thank you!";
-        String priceM3 = quantity + " dollars for " + price + " of coffee. Pay up.";
-        String priceM4 = "Total: " + (quantity*5);
+        String message = createOrderSummary(price);
+        displayMessage(message);
 
-        displayMessage(priceM2);
+    }
 
+    public String createOrderSummary(int price) {
+        return "Name: Kaptain Kunal\nQuantity: " + quantity + "\nTotal: $" + price + "\nThank you!";
     }
 
     public void increment(View view) {
