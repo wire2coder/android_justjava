@@ -3,7 +3,9 @@ package com.example.android.justjava;
 import android.icu.text.NumberFormat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 /*
@@ -13,6 +15,7 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     int quantity = 0;
+    String message = "";
 
     // you need this to render the 'activity_main.xml'
     @Override
@@ -40,13 +43,24 @@ public class MainActivity extends AppCompatActivity {
         String priceMessage = "Total: $" + price;
         priceMessage = priceMessage + "\nThank you!";
 
-        String message = createOrderSummary(price);
+        CheckBox whippedCreamBox = (CheckBox) findViewById(R.id.whipped_cream);
+        boolean whippedCreamValue = whippedCreamBox.isChecked();
+
+        message = createOrderSummary(price, whippedCreamValue);
         displayMessage(message);
 
     }
 
-    public String createOrderSummary(int price) {
-        return "Name: Kaptain Kunal\nQuantity: " + quantity + "\nTotal: $" + price + "\nThank you!";
+    public String createOrderSummary(int price, boolean whippedCream) {
+
+        message = "Name: Kaptain Kunal";
+
+        message += "\nAdd Whipped Cream? " + whippedCream;
+        message += "\nQuantity: " + quantity;
+        message += "\nTotal: $" + price;
+        message += "\nThank you!";
+
+        return message;
     }
 
     public void increment(View view) {
