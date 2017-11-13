@@ -70,7 +70,9 @@ public class MainActivity extends AppCompatActivity {
         priceMessage = priceMessage + "\nThank you!";
 
         message = createOrderSummary(name1, price, whippedCreamValue, chocolateValue);
-        displayMessage(message);
+//        displayMessage(message);
+
+        composeEmail(name1, message);
 
     }
 
@@ -81,6 +83,19 @@ public class MainActivity extends AppCompatActivity {
         intent.setData(Uri.parse("geo:47.6, -122.3"));
 
         // making sure, there is a program that can use a map
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
+    // intent to email a coffee order
+    public void composeEmail(String name, String message) {
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Just Java Order for " + name);
+        intent.putExtra(Intent.EXTRA_TEXT, message);
+
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
         }
