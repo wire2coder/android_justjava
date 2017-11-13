@@ -1,6 +1,10 @@
 package com.example.android.justjava;
 
+import android.content.Context;
+import android.content.Intent;
 import android.icu.text.NumberFormat;
+import android.net.Uri;
+import android.provider.AlarmClock;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +12,7 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /*
 * This app displays an order form to display coffee
@@ -15,7 +20,7 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
-    int quantity = 0;
+    int quantity = 2;
     String message = "";
 
     // you need this to render the 'activity_main.xml'
@@ -29,8 +34,19 @@ public class MainActivity extends AppCompatActivity {
     * Calculate the price of the order
     * @param quantity is the number of coffee ordered
     * */
-    private int calculatePrice(int quantity, int pricePerCup) {
-         return quantity * pricePerCup;
+    private int calculatePrice(int quantity, boolean addWhipCream, boolean addChocolate) {
+
+        int basePrice = 5;
+
+        if (addWhipCream) {
+            basePrice += 1;
+        }
+
+        if (addChocolate) {
+            basePrice += 2;
+        }
+
+         return quantity * basePrice;
 
     }
 
@@ -40,13 +56,8 @@ public class MainActivity extends AppCompatActivity {
     * */
     public void submitOrder(View view) {
 
-        int price = calculatePrice(quantity, 5);
-        String priceMessage = "Total: $" + price;
-        priceMessage = priceMessage + "\nThank you!";
-
         EditText customer_name = (EditText) findViewById(R.id.name_for_order);
         String name1 = customer_name.getText().toString();
-//        Log.v("MainActivity", "Name >>>>>>>>>>>>>>>>>>>>>::: " + name1);
 
         CheckBox topping_whip_cream = (CheckBox) findViewById(R.id.topping_whip_cream);
         boolean whippedCreamValue = topping_whip_cream.isChecked();
@@ -54,9 +65,43 @@ public class MainActivity extends AppCompatActivity {
         CheckBox topping_chocolate = (CheckBox) findViewById(R.id.topping_chocolate);
         boolean chocolateValue = topping_chocolate.isChecked();
 
+        int price = calculatePrice(quantity, whippedCreamValue, chocolateValue);
+        String priceMessage = "Total: $" + price;
+        priceMessage = priceMessage + "\nThank you!";
+
         message = createOrderSummary(name1, price, whippedCreamValue, chocolateValue);
         displayMessage(message);
 
+    }
+
+    // intent to show a map
+    public void showMap() {
+        // throwing a ball to a map program
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse("geo:47.6, -122.3"));
+
+        // making sure, there is a program that can use a map
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+    }
+
+    public void showToastZero() {
+        Context context = getApplicationContext();
+        CharSequence text = "Quantity must be greater than 1";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
+
+    public void showToastHundred() {
+        Context context = getApplicationContext();
+        CharSequence text = "Quantity must be less than 100";
+        int duration = Toast.LENGTH_SHORT;
+
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
     }
 
     public String createOrderSummary(String name, int price, boolean whippedCream, boolean chocolateValue) {
@@ -72,14 +117,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void increment(View view) {
-        quantity += 1;
+        if (quantity == 100) {
+            showToastHundred();
+            return;
+        }
 
+        quantity += 1;
         displayQuantity(quantity);
     }
 
     public void decrement(View view) {
-        quantity -= 1;
+        if (quantity == 1) {
+            showToastZero();
+            return;
+        }
 
+        quantity -= 1;
         displayQuantity(quantity);
     }
 
